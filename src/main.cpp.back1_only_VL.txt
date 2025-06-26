@@ -1,0 +1,109 @@
+#include <Arduino.h>
+#include <Wire.h>
+#include "config.h"
+#include "VL53L0X.h"
+
+
+TwoWire Wire3(PB4, PA8); // SDA=PB4, SCL=PA8
+
+// Create VL53L0X instance using Wire3
+VL53L0X frontTOF(&Wire3, VL53L0X_DEFAULT_ADDRESS);
+VL53L0X leftTOF(&Wire3, VL53L0X_DEFAULT_ADDRESS); // Left sensor address
+VL53L0X rightTOF(&Wire3, VL53L0X_DEFAULT_ADDRESS); // Right sensor address
+
+
+void setup() {
+    Serial1.begin(115200);
+    Wire3.begin();
+    Wire3.setClock(I2C_SPEED); // Set I2C speed to 400kHz
+
+    delay(100);
+    
+    pinMode(X_FRONT, OUTPUT);
+    pinMode(X_LEFT, OUTPUT);
+    pinMode(X_RIGHT, OUTPUT);
+    digitalWrite(X_FRONT, LOW);
+    digitalWrite(X_LEFT, LOW);
+    digitalWrite(X_RIGHT, LOW);
+    
+    Serial1.println("Initializing Front VL53L0X");
+    digitalWrite(X_FRONT, HIGH);
+    if (frontTOF.begin()) {
+        frontTOF.setAddress(VL53L0X_FRONT_ADDRESS);
+        Serial1.print("Front VL53L0X Address: ");
+        Serial1.println(frontTOF.getAddress(), HEX);
+        // sensor.startContinuous(100); // 100ms interval
+    } else {
+        Serial1.println("Failed to initialize VL53L0X!");
+        while(1);
+    }
+    Serial1.println("Initializing Left VL53L0X");
+    digitalWrite(X_LEFT, HIGH);
+    if (leftTOF.begin()) {
+        leftTOF.setAddress(VL53L0X_LEFT_ADDRESS);
+        Serial1.print("Left VL53L0X Address: ");
+        Serial1.println(leftTOF.getAddress(), HEX);
+    } else {
+        Serial1.println("Failed to initialize Left VL53L0X!");
+        while(1);
+    }
+    Serial1.println("Initializing Right VL53L0X");
+    digitalWrite(X_RIGHT, HIGH);
+    if (rightTOF.begin()) {
+        rightTOF.setAddress(VL53L0X_RIGHT_ADDRESS);
+        Serial1.print("Right VL53L0X Address: ");
+        Serial1.println(rightTOF.getAddress(), HEX);
+    } else {
+        Serial1.println("Failed to initialize Right VL53L0X!");
+        while(1);
+    }
+    Serial1.println("VL53L0X initialized successfully!");
+
+
+    pinMode(RIGHT_CLOCKWISE, OUTPUT);
+    pinMode(RIGHT_ANTICLOCKWISE, OUTPUT);
+    pinMode(LEFT_CLOCKWISE, OUTPUT);
+    pinMode(LEFT_ANTICLOCKWISE, OUTPUT);
+    digitalWrite(RIGHT_CLOCKWISE, LOW);
+    digitalWrite(RIGHT_ANTICLOCKWISE, LOW);
+    digitalWrite(LEFT_CLOCKWISE, LOW);
+    digitalWrite(LEFT_ANTICLOCKWISE, LOW);
+    
+}
+
+void loop() {
+    // uint16_t distance = sensor.readRangeContinuousMillimeters();
+    uint16_t front_distance = frontTOF.readRangeSingleMillimeters();
+    if (front_distance == 0) {
+        Serial1.println("No measurement available");
+    } else if (front_distance > 2000) {
+        Serial1.println("Out of range");
+    } else {
+        Serial1.print(" Front Distance: ");
+        Serial1.print(front_distance* 0.1); // Convert to cm
+        // Serial1.println(" cm");
+    }
+    uint16_t left_distance = leftTOF.readRangeSingleMillimeters();
+    if (left_distance == 0) {
+        Serial1.println("No measurement available from Left TOF");
+    } else if (left_distance > 2000) {
+        Serial1.println("Left TOF Out of range");
+    } else {
+        Serial1.print(" Left Distance: ");
+        Serial1.print(left_distance * 0.1); // Convert to cm
+        // Serial1.println(" cm");
+    }
+    uint16_t right_distance = rightTOF.readRangeSingleMillimeters();
+    if (right_distance == 0) {
+        Serial1.println("No measurement available from Right TOF");
+    } else if (right_distance > 2000) {
+        Serial1.println("Right TOF Out of range");
+    } else {
+        Serial1.print(" Right Distance: ");
+        Serial1.print(right_distance * 0.1); // Convert to cm
+        // Serial1.println(" cm");
+    }
+    
+    Serial1.println();
+    // delay(10);
+}

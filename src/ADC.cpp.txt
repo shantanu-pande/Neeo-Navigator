@@ -1,0 +1,40 @@
+#include <Arduino.h>
+
+// Define all 10 ADC pins for STM32F401
+const int adcPins[] = {A2, A3, A4, A5, A6, A7, A8, A9};
+const int numChannels = 8;
+
+void setup() {
+  // Initialize Serial1 on pins A9 (TX) and A10 (RX)
+  Serial1.begin(115200);
+  
+  // Wait for serial port to connect
+  delay(2000);
+  
+  Serial1.println("STM32F401 ADC 10-Channel Reader");
+  Serial1.println("===============================");
+  
+  // Configure ADC resolution (12-bit for STM32)
+  analogReadResolution(12);
+}
+
+void loop() {
+  Serial1.println("\nADC Readings (10 Channels):");
+  Serial1.println("---------------------------");
+  
+  // Read all 10 ADC channels
+  for (int i = 0; i < numChannels; i++) {
+    int adcValue = analogRead(adcPins[i]);
+    float voltage = (adcValue * 3.3) / 4095.0; // Convert to voltage (3.3V reference, 12-bit)
+    
+    Serial1.print("Channel A");
+    Serial1.print(i);
+    Serial1.print(": ");
+    Serial1.print(adcValue);
+    Serial1.print(" (");
+    Serial1.print(voltage, 3);
+    Serial1.println("V)");
+  }
+  
+  delay(1000); // Read every second
+}
