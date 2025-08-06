@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#define MPU_I2C_SPEED 400000
 #define MPU6050_ADDR 0x68
 #define PWR_MGMT_1   0x6B
 #define ACCEL_XOUT_H 0x3B
@@ -20,6 +21,13 @@
 #define GYRO_YOUT_L  0x46
 #define GYRO_ZOUT_H  0x47
 #define GYRO_ZOUT_L  0x48
+#define DLPF_REGISTER 0x1A
+#define DLPF_CFG     0x05
+#define GYRO_CONFIG  0x1B
+#define GYRO_FS_SEL  0x08 
+#define ACCEL_CONFIG 0x1C
+#define ACCEL_FS_SEL 0x10
+
 
 class MPU6050 {
     private:
@@ -27,7 +35,14 @@ class MPU6050 {
         int16_t _accelX, _accelY, _accelZ;
         int16_t _temperature;
         int16_t _gyroX, _gyroY, _gyroZ;
-        int16_t _angleX, _angleY, _angleZ;
+
+        float _angleX, _angleY, _angleZ;
+
+        float _accX_g, _accY_g, _accZ_g;
+        float _rateX, _rateY, _rateZ;
+
+        float _rateCalibrationRoll, _rateCalibrationPitch, _rateCalibrationYaw;
+        int _rateCalibrationNumber;
 
         void readSensor();
 
@@ -35,6 +50,7 @@ class MPU6050 {
         MPU6050(TwoWire LocalWire);
         ~MPU6050();
         void begin();
+        void caliberate();
         void update();
         
         int16_t getAccelX();
@@ -47,9 +63,9 @@ class MPU6050 {
         int16_t getGyroY();
         int16_t getGyroZ();
 
-        int16_t getAngleX();
-        int16_t getAngleY();
-        int16_t getAngleZ();
+        float getAngleX();
+        float getAngleY();
+        float getAngleZ();
 
 };
 

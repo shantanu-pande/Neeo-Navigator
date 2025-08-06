@@ -21,28 +21,34 @@ void kalman_1d(float KalmanState, float KalmanUncertainty, float KalmanInput, fl
 }
 
 void gyro_signals(void) {
-  Wire.beginTransmission(0x68);
-  Wire.write(0x1A);
-  Wire.write(0x05);
-  Wire.endTransmission();
-  Wire.beginTransmission(0x68);
-  Wire.write(0x1C);
-  Wire.write(0x10);
-  Wire.endTransmission();
-  Wire.beginTransmission(0x68);
-  Wire.write(0x3B);
-  Wire.endTransmission(); 
-  Wire.requestFrom(0x68,6);
-  int16_t AccXLSB = Wire.read() << 8 | Wire.read();
-  int16_t AccYLSB = Wire.read() << 8 | Wire.read();
-  int16_t AccZLSB = Wire.read() << 8 | Wire.read();
-  Wire.beginTransmission(0x68);
-  Wire.write(0x1B); 
-  Wire.write(0x8);
-  Wire.endTransmission();     
+//   Wire.beginTransmission(0x68);
+//   Wire.write(0x1A);
+//   Wire.write(0x05);
+//   Wire.endTransmission();
+
+//   Wire.beginTransmission(0x68);
+//   Wire.write(0x1C);
+//   Wire.write(0x10);
+//   Wire.endTransmission();
+
+//   Wire.beginTransmission(0x68);
+//   Wire.write(0x3B);
+//   Wire.endTransmission(); 
+
+//   Wire.requestFrom(0x68,6);
+//   int16_t AccXLSB = Wire.read() << 8 | Wire.read();
+//   int16_t AccYLSB = Wire.read() << 8 | Wire.read();
+//   int16_t AccZLSB = Wire.read() << 8 | Wire.read();
+
+//   Wire.beginTransmission(0x68);
+//   Wire.write(0x1B); 
+//   Wire.write(0x8);
+//   Wire.endTransmission();     
+  
   Wire.beginTransmission(0x68);
   Wire.write(0x43);
   Wire.endTransmission();
+  
   Wire.requestFrom(0x68,6);
   int16_t GyroX=Wire.read()<<8 | Wire.read();
   int16_t GyroY=Wire.read()<<8 | Wire.read();
