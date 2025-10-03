@@ -12,8 +12,8 @@ bool isCalibrated = false;
 // PID controller constants
 const float KP = 55.00;     // Proportional gain
 const float KI = 0.00;    // Integral gain
-const float KD = 35;      // Derivative gain
-const int BASE_SPEED = 50; // Base motor speed (PWM value)
+const float KD = 45;      // Derivative gain
+const int BASE_SPEED =44; // Base motor speed (PWM value)
 
 // Global variables for line tracking
 float lastValidPosition = 3.5;  // Start assuming center position
